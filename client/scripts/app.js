@@ -16,3 +16,16 @@ var entityMap = {
   '`': '&#x60;',
   '=': '&#x3D;'
 };
+
+// Initialize app object
+var app = {
+  init: function() {},
+
+  // submits a POST request via $.ajax
+  send: function() {
+
+  },
+
+  // submits a GET request via $.ajax
+  fetch: function() {}
+};
