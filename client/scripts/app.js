@@ -1,3 +1,4 @@
+
 var app = {};
 
 app.server = 'https://api.parse.com/1/classes/messages';
@@ -69,14 +70,21 @@ $(document).on('submit', '.submit', function() {
   app.handleSubmit(message);
 });
 
+// escapeHtml, courtesy of Mustache.js
+// Replaces certain characters with their HTML entity
+var escapeHtml = function(string) {
+  return String(string).replace(/[&<>"'`=\/]/g, function fromEntityMap(s) {
+    return entityMap[s];
+  });
+};
 
-
-
-
-
-
-
-
-
-
-
+var entityMap = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#39;',
+  '/': '&#x2F;',
+  '`': '&#x60;',
+  '=': '&#x3D;'
+};
