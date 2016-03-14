@@ -25,12 +25,40 @@ app.fetch = function() {
   $.ajax({
     url: 'https://api.parse.com/1/classes/messages',
     type: 'GET',
+    data: '',
     contentType: 'application/json',
     success: function (data) {
-      console.log('chatterbox: Message received');
+      console.log('chatterbox: Message received', data);
     },
-    error: function (data) {
+    error: function () {
       console.error('chatterbox: failed to GET');
     }
   });
 };
+
+app.clearMessages = function() {
+  $('#chats').children().remove();
+};
+
+app.addMessage = function(message) {
+  var username = message.username;
+  var text = message.text;
+  var roomname = message.roomname;
+  $('#chats').append('<p>' + text + '</p>');
+};
+
+app.addRoom = function() {
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
