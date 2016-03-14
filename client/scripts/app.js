@@ -44,12 +44,30 @@ app.addMessage = function(message) {
   var username = message.username;
   var text = message.text;
   var roomname = message.roomname;
-  $('#chats').append('<p>' + text + '</p>');
+  $('#chats').append('<div><span class="username">' + username + '</span>' + '<p>' + text + '</p></div>');
 };
 
-app.addRoom = function() {
-
+app.addRoom = function(name) {
+  $('#roomSelect').append('<p>' + name + '</p>');
 };
+
+app.addFriend = function(node) {
+  console.log(node.text() + ' has been triggered');
+};
+
+app.handleSubmit = function(message) {
+  app.send(message);
+};
+
+// Event Listeners
+$(document).on('click', '.username', function() {
+  app.addFriend($(this));
+});
+
+$(document).on('submit', '.submit', function() {
+  var message = $('#message').val();
+  app.handleSubmit(message);
+});
 
 
 
