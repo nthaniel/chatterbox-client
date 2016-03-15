@@ -6,7 +6,7 @@ app.server = 'https://api.parse.com/1/classes/messages';
 app.cache = {};
 
 app.rooms = [];
-app.userRooms = [];
+app.userRooms = ['All', 'Add a Room'];
 
 app.friends = [];
 
@@ -37,20 +37,36 @@ app.fetch = function() {
     contentType: 'application/json',
     success: function (data) {
       var messages = [];
+      // get a filtered array based on our current room
       var filter = data.results.filter(function(message) {
+        // if current room is 'All', everything passes filter test
         if ($('select :selected').text() === 'All') {
           return true;
         }
+        // otherwise, see if message's room name matches current room
         return message.roomname === $('select :selected').text();
       });
+      // iterate through length of filter array and checking that messages array has length less than 10
       for (var j = 0; j < filter.length && messages.length < 10; j++) {
         messages.push(filter[j]);
       }
+      // clear old messages
       app.clearMessages();
+      // repopulate with new messages
       for (var i = 0; i < messages.length; i++) {
         var message = messages[i];
+        message.friend = false;
+        for (var k = 0; message.friend === false && k < app.friends.length; k++) {
+          if (message.username === app.friends[k]) {
+            message.friend = true;
+          }
+        }
         if (!app.cache[message.objectId]) {
-          app.addMessage(message);
+          if (message.friend) {
+            app.addMessage(message, 'friend');
+          } else {
+            app.addMessage(message);
+          }
         }
       }
     },
@@ -69,13 +85,14 @@ app.clearMessages = function() {
   }
 };
 
-app.addMessage = function(message) {
+app.addMessage = function(message, className) {
+  className = className || '';
   // cover xss vulnerabilities
   var username = escapeHtml(message.username);
   var text = escapeHtml(message.text);
   var roomname = escapeHtml(message.roomname);
   // add messages to DOM
-  $('.chats').append('<div class="chat"><span class="username">' + username + '</span>' + '<p>' + text + '</p></div>');
+  $('.chats').append('<div class="chat ' + className + '"><span class="username">' + username + '</span>' + '<p>' + text + '</p></div>');
   // add message's objectId to cache
   app.cache[message.objectId] = message.objectId;
   // call addRoom on roomname
@@ -99,11 +116,13 @@ app.addRoom = function(name, userCreated) {
 app.addFriend = function(node) {
   var friend = node.text();
   var alreadyFriends = app.friends.indexOf(friend);
-  if (alreadyFriends === -1) {
+  var thisUser = window.location.href.match(/username=(.+)#?/);
+  if (alreadyFriends === -1 && friend !== thisUser) {
     app.friends.push(friend);
   } else {
     app.friends.splice(alreadyFriends, 1);
   }
+  app.fetch();
 };
 
 app.handleSubmit = function(message) {

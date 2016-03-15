@@ -79,7 +79,9 @@ form input[type=text] {
 }
 
 .chat:hover {
-    background-color: #ddd;
+    /*background-color: #ddd;*/
+    background-color: orange;
+    opacity: 0.7;
 }
 
 .spinner {
@@ -102,4 +104,8 @@ form input[type=text] {
 
 #roomSelect {
     margin-top: 15px; 
+}
+
+.friend {
+    background-color: orange;
 }
