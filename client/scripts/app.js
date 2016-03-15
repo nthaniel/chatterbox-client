@@ -67,12 +67,23 @@ app.addFriend = function(node) {
 };
 
 app.handleSubmit = function(message) {
-  var matched = window.location.href.match(/username=(.+)#?/) || ['', 'anonymous'];
-  var ourUsername = matched[1];
-  app.send({
-    username: ourUsername,
-    text: message
-  });
+  if ($('.room').length) {
+    var roomName = $('.room').val();
+    app.addRoom(roomName);
+    $('.buttonText').fadeOut('fast', function() { 
+      $(this).text('Success!').fadeIn('fast', function() {
+        $(this).fadeOut('fast', function() { $(this).text('Add room').fadeIn('fast'); });
+      }); });
+  } else {
+    var roomName = $('select :selected').text();
+    var matched = window.location.href.match(/username=(.+)#?/) || ['', 'anonymous'];
+    var ourUsername = matched[1];
+    app.send({
+      username: ourUsername,
+      text: message,
+      roomname: roomName
+    });
+  }
 };
 
 // Event Listeners
@@ -98,10 +109,12 @@ $(document).on('change', 'select', function() {
     $('.message').addClass('room');
     $('.send').animate({width: '20%'});
     $('#roomSelect').animate({left: '30px'});
+    $('.buttonText').text('Add room');
   } else {
     $('.message').removeClass('room');
     $('.send').animate({width: '70%'});
     $('#roomSelect').animate({left: '30px'});
+    $('.buttonText').text('Post');
   }
 });
 
