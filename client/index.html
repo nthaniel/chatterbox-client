@@ -1,38 +1,39 @@
 <!doctype html>
 <html>
+    <head>
+        <meta charset="utf-8">
+        <title>chatterbox</title>
+        <link rel="stylesheet" href="styles/styles.css">
+        <!-- dependencies -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.6.15/browser.js"></script>
+        <script src="bower_components/jquery/dist/jquery.js"></script>
+        <script src="bower_components/underscore/underscore-min.js"></script>
+        <script src="bower_components/backbone/backbone.js"></script> 
+        <!-- your scripts -->
+        <script src="env/config.js"></script>
+        <script src="scripts/app.js"></script>
+    </head>
 
-<head>
-    <meta charset="utf-8">
-    <title>chatterbox</title>
-    <link rel="stylesheet" href="styles/styles.css">
-    <!-- dependencies -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.6.15/browser.js"></script>
-    <script src="bower_components/jquery/dist/jquery.js"></script>
-    <script src="bower_components/underscore/underscore-min.js"></script>
-    <script src="bower_components/backbone/backbone.js"></script> 
-    <!-- your scripts -->
-    <script src="env/config.js"></script>
-    <script src="scripts/app.js"></script>
-</head>
-
-<body>
-    <div id="main">
-        <h1>chatterbox</h1>
-        <!-- Your HTML goes here! -->
-    </div>
-    <div id="roomSelect">
-      <select>
-        <option class="add">Add a Room</option>
-        <option class="allRooms" selected>All</option>
-      </select>
-    </div>
-    <div class="container">
-      <form class="send" action="#">
-        <input class="message" type="text"></input>
-      </form>
-      <button class="submit"><span class="buttonText">Post</span></button>
-    </div>
-    <div class="chats"></div>
-  </body>
+    <body>
+        <div id="main">
+            <h1>chatterbox</h1>
+            <!-- Your HTML goes here! -->
+        </div>
+        <div id="roomSelect">
+          <select>
+            <option class="add">Add a Room</option>
+            <option class="allRooms" selected>All</option>
+          </select>
+        </div>
+        <div class="container">
+          <form class="send" action="#">
+            <input class="message" type="text" placeholder="Write your message here..."></input>
+          </form>
+          <button class="submit"><span class="buttonText">Post</span></button>
+        </div>
+        <div class="chats"></div>
+        <script>
+            $(function() { app.init() });
+        </script>
+    </body>
 </html>
-

@@ -9,6 +9,13 @@ body {
     font-family: arial, sans-serif;
 }
 
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+    outline: none;
+}
+
 .container {
     position: relative;
     height: 70px;
@@ -65,7 +72,7 @@ form input[type=text] {
     margin-right: 10px;
     width: 100%;
     font-size: 12px;
-    padding: 5px 0 5px 0;
+    padding: 5px;
 }
 
 .chat {
@@ -103,9 +110,14 @@ form input[type=text] {
 }
 
 #roomSelect {
-    margin-top: 15px; 
+    margin-top: 15px;
+
 }
 
 .friend {
     background-color: orange;
+}
+
+.username:hover {
+    cursor: pointer;
 }

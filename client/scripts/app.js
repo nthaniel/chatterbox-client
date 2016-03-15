@@ -12,6 +12,45 @@ app.friends = [];
 
 app.init = function () {
 
+  // Event Listeners
+  $(document).on('click', '.username', function() {
+    app.addFriend($(this));
+  });
+
+  $(document).on('click', '.submit', function() {
+    var message = $('.message').val();
+    app.handleSubmit(message);
+    if ($('option:selected').hasClass('add')) { // if you're adding a new room
+      $('.add').prop('selected', false); // deselect the add room option
+      $('option').each(function() { if ($(this).text() === message) { $(this).prop('selected', true); } }); // iterate through options and select newly created room
+      $('select').trigger('change');
+    }
+    $('.message').val('');
+  });
+
+  $(document).on('submit', '.send', (function(e) {
+    e.preventDefault();
+    $('.submit').trigger('click');
+  }));
+
+  $(document).on('change', 'select', function() {
+    if ($('option:selected').hasClass('add')) {
+      $('.message').addClass('room');
+      $('.send').animate({width: '20%'});
+      $('#roomSelect').animate({left: '30px'});
+      $('.buttonText').text('Add room');
+      $('.message').attr('placeholder', 'Enter room name...');
+    } else { // the case where you are switching to a non-"Add Room" room
+      $('.message').removeClass('room');
+      $('.send').animate({width: '70%'});
+      $('#roomSelect').animate({left: '30px'});
+      $('.message').attr('placeholder', 'Write your message here...');
+      app.fetch();
+    }
+  });
+
+  app.fetch();
+  setInterval(app.fetch, 2000);
 };
 
 app.send = function(message) {
@@ -88,9 +127,9 @@ app.clearMessages = function() {
 app.addMessage = function(message, className) {
   className = className || '';
   // cover xss vulnerabilities
-  var username = escapeHtml(message.username);
-  var text = escapeHtml(message.text);
-  var roomname = escapeHtml(message.roomname);
+  var username = app.escapeHtml(message.username);
+  var text = app.escapeHtml(message.text);
+  var roomname = app.escapeHtml(message.roomname);
   // add messages to DOM
   $('.chats').append('<div class="chat ' + className + '"><span class="username">' + username + '</span>' + '<p>' + text + '</p></div>');
   // add message's objectId to cache
@@ -116,7 +155,7 @@ app.addRoom = function(name, userCreated) {
 app.addFriend = function(node) {
   var friend = node.text();
   var alreadyFriends = app.friends.indexOf(friend);
-  var thisUser = window.location.href.match(/username=(.+)#?/);
+  var thisUser = window.location.href.match(/username=(.+)#?/)[1];
   if (alreadyFriends === -1 && friend !== thisUser) {
     app.friends.push(friend);
   } else {
@@ -145,56 +184,15 @@ app.handleSubmit = function(message) {
   }
 };
 
-// Event Listeners
-$(document).on('ready', app.fetch);
-
-$(document).on('click', '.username', function() {
-  app.addFriend($(this));
-});
-
-$(document).on('click', '.submit', function() {
-  var message = $('.message').val();
-  app.handleSubmit(message);
-  if ($('option:selected').hasClass('add')) { // if you're adding a new room
-    $('.add').prop('selected', false); // deselect the add room option
-    $('option').each(function() { if ($(this).text() === message) { $(this).prop('selected', true); } }); // iterate through options and select newly created room
-    $('select').trigger('change');
-  }
-  $('.message').val('');
-});
-
-$(document).on('submit', '.send', (function(e) {
-  e.preventDefault();
-  $('.submit').trigger('click');
-}));
-
-$(document).on('change', 'select', function() {
-  if ($('option:selected').hasClass('add')) {
-    $('.message').addClass('room');
-    $('.send').animate({width: '20%'});
-    $('#roomSelect').animate({left: '30px'});
-    $('.buttonText').text('Add room');
-  } else { // the case where you are switching to a non-"Add Room" room
-    $('.message').removeClass('room');
-    $('.send').animate({width: '70%'});
-    $('#roomSelect').animate({left: '30px'});
-    $('.buttonText').text('Post');
-    app.fetch();
-  }
-});
-
-
-setInterval(app.fetch, 2000);
-
 // escapeHtml, courtesy of Mustache.js
 // Replaces certain characters with their HTML entity
-var escapeHtml = function(string) {
+app.escapeHtml = function(string) {
   return String(string).replace(/[&<>"'`=\/]/g, function fromEntityMap(s) {
     return entityMap[s];
   });
 };
 
-var entityMap = {
+app.entityMap = {
   '&': '&amp;',
   '<': '&lt;',
   '>': '&gt;',
