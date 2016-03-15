@@ -95,11 +95,11 @@ $(document).on('submit', '.send', (function(e) {
 
 $(document).on('change', 'select', function() {
   if ($('option:selected').hasClass('add')) {
-    $('.message').toggleClass('room');
+    $('.message').addClass('room');
     $('.send').animate({width: '20%'});
     $('#roomSelect').animate({left: '30px'});
   } else {
-    $('.message').toggleClass('room');
+    $('.message').removeClass('room');
     $('.send').animate({width: '70%'});
     $('#roomSelect').animate({left: '30px'});
   }
