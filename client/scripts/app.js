@@ -8,6 +8,8 @@ app.cache = {};
 app.rooms = [];
 app.userRooms = [];
 
+app.friends = [];
+
 app.init = function () {
 
 };
@@ -95,7 +97,13 @@ app.addRoom = function(name, userCreated) {
 };
 
 app.addFriend = function(node) {
-  console.log(node.text() + ' has been triggered');
+  var friend = node.text();
+  var alreadyFriends = app.friends.indexOf(friend);
+  if (alreadyFriends === -1) {
+    app.friends.push(friend);
+  } else {
+    app.friends.splice(alreadyFriends, 1);
+  }
 };
 
 app.handleSubmit = function(message) {
@@ -104,7 +112,7 @@ app.handleSubmit = function(message) {
     app.addRoom(roomName, true);
     $('.buttonText').fadeOut('fast', function() { 
       $(this).text('Success!').fadeIn('fast', function() {
-        $(this).fadeOut('fast', function() { $(this).text('Add room').fadeIn('fast'); });
+        $(this).fadeOut('fast', function() { $(this).text('Post').fadeIn('fast'); });
       }); });
   } else {
     var roomName = $('select :selected').text();
@@ -128,6 +136,11 @@ $(document).on('click', '.username', function() {
 $(document).on('click', '.submit', function() {
   var message = $('.message').val();
   app.handleSubmit(message);
+  if ($('option:selected').hasClass('add')) { // if you're adding a new room
+    $('.add').prop('selected', false); // deselect the add room option
+    $('option').each(function() { if ($(this).text() === message) { $(this).prop('selected', true); } }); // iterate through options and select newly created room
+    $('select').trigger('change');
+  }
   $('.message').val('');
 });
 
