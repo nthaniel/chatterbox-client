@@ -131,7 +131,7 @@ app.addMessage = function(message, className) {
   var text = app.escapeHtml(message.text);
   var roomname = app.escapeHtml(message.roomname);
   // add messages to DOM
-  $('.chats').append('<div class="chat ' + className + '"><span class="username">' + username + '</span>' + '<p>' + text + '</p></div>');
+  $('.chats').append(`<div class="chat ${className}"><span class="username">${username}</span><p>${text}</p></div>`);
   // add message's objectId to cache
   app.cache[message.objectId] = message.objectId;
   // call addRoom on roomname
@@ -142,11 +142,11 @@ app.addRoom = function(name, userCreated) {
   // if room is not already in our rooms array, add it
   if (app.rooms.indexOf(name) === -1 && app.userRooms.indexOf(name) === -1) {
     if (userCreated) { // we want to keep user-created rooms
-      $('#roomSelect .allRooms').after('<option>' + name + '</option>');
+      $('#roomSelect .allRooms').after(`<option>${name}</option>`);
       app.userRooms.push(name);
     } else { // otherwise, give new room two classes: temporary and its own name
-      var newClass = '$' + name.replace(/\s/g, '');
-      $('#roomSelect select').append('<option class="temporary ' + newClass + '">' + name + '</option>');
+      var newClass = `$${name.replace(/\s/g, '')}`;
+      $('#roomSelect select').append(`<option class="temporary ${newClass}">${name}</option>`);
       app.rooms.push(name);
     }
   }
@@ -188,7 +188,7 @@ app.handleSubmit = function(message) {
 // Replaces certain characters with their HTML entity
 app.escapeHtml = function(string) {
   return String(string).replace(/[&<>"'`=\/]/g, function fromEntityMap(s) {
-    return entityMap[s];
+    return app.entityMap[s];
   });
 };
 
