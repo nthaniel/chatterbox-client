@@ -5,6 +5,9 @@ app.server = 'https://api.parse.com/1/classes/messages';
 
 app.cache = {};
 
+app.rooms = [];
+app.userRooms = [];
+
 app.init = function () {
 
 };
@@ -31,9 +34,19 @@ app.fetch = function() {
     data: '',
     contentType: 'application/json',
     success: function (data) {
+      var messages = [];
+      var filter = data.results.filter(function(message) {
+        if ($('select :selected').text() === 'All') {
+          return true;
+        }
+        return message.roomname === $('select :selected').text();
+      });
+      for (var j = 0; j < filter.length && messages.length < 10; j++) {
+        messages.push(filter[j]);
+      }
       app.clearMessages();
-      for (var i = 0; i < 10; i++) {
-        var message = data.results[i];
+      for (var i = 0; i < messages.length; i++) {
+        var message = messages[i];
         if (!app.cache[message.objectId]) {
           app.addMessage(message);
         }
@@ -48,18 +61,37 @@ app.fetch = function() {
 app.clearMessages = function() {
   $('.chats').children().remove();
   app.cache = {};
+  while (app.rooms.length > 20) { // if rooms has more than 20, remove first items until only 20 are there
+    var toRemove = app.rooms.shift();
+    $('select .temporary .' + toRemove).remove();
+  }
 };
 
 app.addMessage = function(message) {
+  // cover xss vulnerabilities
   var username = escapeHtml(message.username);
   var text = escapeHtml(message.text);
   var roomname = escapeHtml(message.roomname);
+  // add messages to DOM
   $('.chats').append('<div class="chat"><span class="username">' + username + '</span>' + '<p>' + text + '</p></div>');
+  // add message's objectId to cache
   app.cache[message.objectId] = message.objectId;
+  // call addRoom on roomname
+  app.addRoom(roomname);
 };
 
-app.addRoom = function(name) {
-  $('#roomSelect select').append('<option>' + name + '</option>');
+app.addRoom = function(name, userCreated) {
+  // if room is not already in our rooms array, add it
+  if (app.rooms.indexOf(name) === -1 && app.userRooms.indexOf(name) === -1) {
+    if (userCreated) { // we want to keep user-created rooms
+      $('#roomSelect .allRooms').after('<option>' + name + '</option>');
+      app.userRooms.push(name);
+    } else { // otherwise, give new room two classes: temporary and its own name
+      var newClass = '$' + name.replace(/\s/g, '');
+      $('#roomSelect select').append('<option class="temporary ' + newClass + '">' + name + '</option>');
+      app.rooms.push(name);
+    }
+  }
 };
 
 app.addFriend = function(node) {
@@ -67,9 +99,9 @@ app.addFriend = function(node) {
 };
 
 app.handleSubmit = function(message) {
-  if ($('.room').length) {
+  if ($('.room').length) { // if the input field is currently for adding a room
     var roomName = $('.room').val();
-    app.addRoom(roomName);
+    app.addRoom(roomName, true);
     $('.buttonText').fadeOut('fast', function() { 
       $(this).text('Success!').fadeIn('fast', function() {
         $(this).fadeOut('fast', function() { $(this).text('Add room').fadeIn('fast'); });
@@ -110,11 +142,12 @@ $(document).on('change', 'select', function() {
     $('.send').animate({width: '20%'});
     $('#roomSelect').animate({left: '30px'});
     $('.buttonText').text('Add room');
-  } else {
+  } else { // the case where you are switching to a non-"Add Room" room
     $('.message').removeClass('room');
     $('.send').animate({width: '70%'});
     $('#roomSelect').animate({left: '30px'});
     $('.buttonText').text('Post');
+    app.fetch();
   }
 });
 
