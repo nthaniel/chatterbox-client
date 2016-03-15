@@ -9,7 +9,12 @@ body {
     font-family: arial, sans-serif;
 }
 
-#main, #chats {
+.container {
+    position: relative;
+    
+}
+
+#main, .chats {
     width: 80%;
     margin: auto;
     text-align: left;
@@ -52,9 +57,8 @@ body {
 
 form {
     padding: 20px;
-    padding-left: 0;
     display: inline-block;
-    width: 80%;
+    width: 70%;
 }
 
 form input[type=text] {
@@ -88,15 +92,14 @@ form input[type=text] {
     padding: 10px;
 }
 
-/*#send {
-    margin: 0px;
-    padding: 10px 0 10px 0;
-    width: 80%;
-    display: inline-block;
-}*/
-
 .submit {
     width: 10%;
     height: 29px;
     display: inline-block;
+    position: absolute;
+    top: 20px;
+}
+
+#roomSelect {
+    margin-top: 10px;
 }

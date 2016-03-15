@@ -20,12 +20,20 @@
         <h1>chatterbox</h1>
         <!-- Your HTML goes here! -->
     </div>
-    <div id="roomSelect"></div>
-    <form id="send" action="#">
-      <input id="message" type="text"></input>
-    </form>
-    <button class="submit">Submit</button>
-    <div id="chats"></div>
+    <div id="roomSelect">
+      <select>
+        <option class="add" value="addRoom">Add a Room</option>
+        <option selected value="option1">Lobby</option>
+        <option selected value="option1">Oakland</option>
+      </select>
+    </div>
+    <div class="container">
+      <form class="send" action="#">
+        <input class="message" type="text"></input>
+      </form>
+      <button class="submit">Submit</button>
+    </div>
+    <div class="chats"></div>
   </body>
 </html>
 

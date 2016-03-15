@@ -15,8 +15,8 @@ app.send = function(message) {
     type: 'POST',
     data: JSON.stringify(message),
     contentType: 'application/json',
-    success: function (data) {
-      console.log('chatterbox: Message sent', data);
+    success: function () {
+      app.fetch();
     },
     error: function (data) {
       console.error('chatterbox: failed to POST');
@@ -31,6 +31,7 @@ app.fetch = function() {
     data: '',
     contentType: 'application/json',
     success: function (data) {
+      app.clearMessages();
       for (var i = 0; i < 10; i++) {
         var message = data.results[i];
         if (!app.cache[message.objectId]) {
@@ -45,7 +46,7 @@ app.fetch = function() {
 };
 
 app.clearMessages = function() {
-  $('#chats').children().remove();
+  $('.chats').children().remove();
   app.cache = {};
 };
 
@@ -53,12 +54,12 @@ app.addMessage = function(message) {
   var username = escapeHtml(message.username);
   var text = escapeHtml(message.text);
   var roomname = escapeHtml(message.roomname);
-  $('#chats').prepend('<div><span class="username">' + username + '</span>' + '<p>' + text + '</p></div>');
+  $('.chats').append('<div class="chat"><span class="username">' + username + '</span>' + '<p>' + text + '</p></div>');
   app.cache[message.objectId] = message.objectId;
 };
 
 app.addRoom = function(name) {
-  $('#roomSelect').append('<p>' + name + '</p>');
+  $('#roomSelect select').append('<option>' + name + '</option>');
 };
 
 app.addFriend = function(node) {
@@ -66,7 +67,8 @@ app.addFriend = function(node) {
 };
 
 app.handleSubmit = function(message) {
-  var ourUsername = window.location.href.match(/username=(.+)#/)[1];
+  var matched = window.location.href.match(/username=(.+)#?/) || ['', 'anonymous'];
+  var ourUsername = matched[1];
   app.send({
     username: ourUsername,
     text: message
@@ -81,18 +83,30 @@ $(document).on('click', '.username', function() {
 });
 
 $(document).on('click', '.submit', function() {
-  console.log('I heard you click that button');
-  var message = $('#message').val();
+  var message = $('.message').val();
   app.handleSubmit(message);
-  $('#message').val('');
+  $('.message').val('');
 });
 
-$(document).on('submit', '#send', (function(e) {
+$(document).on('submit', '.send', (function(e) {
   e.preventDefault();
   $('.submit').trigger('click');
 }));
 
-setInterval(app.fetch, 5000);
+$(document).on('change', 'select', function() {
+  if ($('option:selected').hasClass('add')) {
+    $('.message').toggleClass('room');
+    $('.send').animate({width: '20%'});
+    $('#roomSelect').animate({left: '30px'});
+  } else {
+    $('.message').toggleClass('room');
+    $('.send').animate({width: '70%'});
+    $('#roomSelect').animate({left: '30px'});
+  }
+});
+
+
+setInterval(app.fetch, 2000);
 
 // escapeHtml, courtesy of Mustache.js
 // Replaces certain characters with their HTML entity
