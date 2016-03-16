@@ -92,8 +92,7 @@ app.fetch = function() {
       // clear old messages
       app.clearMessages();
       // repopulate with new messages
-      for (var i = 0; i < messages.length; i++) {
-        var message = messages[i];
+      for (var message of messages) {
         message.friend = false;
         for (var k = 0; message.friend === false && k < app.friends.length; k++) {
           if (message.username === app.friends[k]) {
