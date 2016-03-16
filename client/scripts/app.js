@@ -22,7 +22,7 @@ app.init = function () {
     app.handleSubmit(message);
     if ($('option:selected').hasClass('add')) { // if you're adding a new room
       $('.add').prop('selected', false); // deselect the add room option
-      $('option').each(function() { if ($(this).text() === message) { $(this).prop('selected', true); } }); // iterate through options and select newly created room
+      $('option').each(() => { if ($(this).text() === message) { $(this).prop('selected', true); } }); // iterate through options and select newly created room
       $('select').trigger('change');
     }
     $('.message').val('');
@@ -62,9 +62,7 @@ app.send = function(message) {
     success: function () {
       app.fetch();
     },
-    error: function (data) {
-      console.error('chatterbox: failed to POST');
-    }
+    error: () => { console.error('chatterbox: failed to POST'); }
   });
 };
 
@@ -108,9 +106,7 @@ app.fetch = function() {
         }
       }
     },
-    error: function () {
-      console.error('chatterbox: failed to GET');
-    }
+    error: () => { console.error('chatterbox: failed to GET'); }
   });
 };
 
@@ -186,9 +182,7 @@ app.handleSubmit = function(message) {
 // escapeHtml, courtesy of Mustache.js
 // Replaces certain characters with their HTML entity
 app.escapeHtml = function(string) {
-  return String(string).replace(/[&<>"'`=\/]/g, function fromEntityMap(s) {
-    return app.entityMap[s];
-  });
+  return String(string).replace(/[&<>"'`=\/]/g, (s) => app.entityMap[s]);
 };
 
 app.entityMap = {
